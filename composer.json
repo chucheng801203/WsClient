@@ -1,0 +1,22 @@
+{
+    "name": "peterchu/ws-client",
+    "description": "a simple websocket client",
+    "type": "library",
+    "require": {
+        "php": "^7.4",
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Peterchu\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "PeterChu",
+            "email": "chucheng801203@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}

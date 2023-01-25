@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  app:
+    container_name: wsTest
+    build:
+      context: .
+      dockerfile: ./docker/phpcli/Dockerfile
+    tty: true
+    restart: always
+    volumes:
+      - ./:/wsTest
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
