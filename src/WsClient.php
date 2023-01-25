@@ -77,6 +77,12 @@ class WsClient
      */
     private $onMessage;
     /**
+     * 收到 server 傳過來的 close frame 時觸發 callback
+     *
+     * @var callable
+     */
+    private $onClose;
+    /**
      * 與 server 連線的 stream
      *
      * @var resource|null
@@ -106,6 +112,16 @@ class WsClient
     public function setOnMessage(callable $onMessage): WsClient
     {
         $this->onMessage = $onMessage;
+        return $this;
+    }
+
+    /**
+     * @param callable $onClose
+     * @return WsClient
+     */
+    public function setOnClose(callable $onClose): WsClient
+    {
+        $this->onClose = $onClose;
         return $this;
     }
 
@@ -197,7 +213,13 @@ class WsClient
                     fclose($this->stream);
                 }
 
-                throw new Exception('WsClient: receive close frame: ' . json_encode($message));
+                if (is_callable($this->onClose)) {
+                    call_user_func($this->onClose, $frameType, $message);
+                }
+
+                echo "WsClient: info: disconnected from server($this->url)\n";
+
+                break;
             }
 
             if (!is_callable($this->onMessage) || $frameType === self::NO_FRAME) {
