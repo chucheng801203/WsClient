@@ -200,6 +200,9 @@ class WsClient
 
         echo "WsClient: info: connection with the server($this->url) is established\n";
 
+        $frameType = null;
+        $message = null;
+
         // 處理 websocket frame
         while (true) {
             list($frameType, $message) = $this->read();
@@ -213,11 +216,7 @@ class WsClient
                     fclose($this->stream);
                 }
 
-                if (is_callable($this->onClose)) {
-                    call_user_func($this->onClose, $frameType, $message);
-                }
-
-                echo "WsClient: info: disconnected from server($this->url)\n";
+                echo 'WsClient: info: receive close frame: ' . json_encode($message) . "\n";
 
                 break;
             }
@@ -229,7 +228,13 @@ class WsClient
             call_user_func($this->onMessage, $frameType, $message);
         }
 
-        $this->disconnect();
+        if ($frameType !== self::CLOSE_MESSAGE) {
+            $this->disconnect();
+        }
+
+        if (is_callable($this->onClose)) {
+            call_user_func($this->onClose, $frameType, $message);
+        }
 
         echo "WsClient: info: disconnected from server($this->url)\n";
     }
